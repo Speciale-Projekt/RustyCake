@@ -1,25 +1,57 @@
 extern crate notify;
 extern crate libafl;
 
+use std::path::PathBuf;
 use std::borrow::Borrow;
 use std::fs;
-use libafl::{
-    bolts::AsSlice,
-    inputs::{BytesInput, HasTargetBytes},
-};
 use notify::{Watcher, RecursiveMode, watcher, raw_watcher, RawEvent, op};
-use std::sync::mpsc::channel;
+use std::sync::mpsc::{channel, Receiver, Sender};
 use std::time::Duration;
 use std::fs::File;
 use std::io::BufReader;
 use std::io::prelude::*;
-use crate::libafl::inputs::Input;
+use std::net::UdpSocket;
+use std::process::{Command, ExitStatus};
+use std::sync::mpsc;
+use libafl::{bolts::{current_nanos, rands::StdRand, tuples::tuple_list, AsSlice}, corpus::{InMemoryCorpus, OnDiskCorpus}, Evaluator, events::SimpleEventManager, executors::{inprocess::InProcessExecutor, ExitKind}, feedbacks::{CrashFeedback, MaxMapFeedback}, fuzzer::{Fuzzer, StdFuzzer}, generators::RandPrintablesGenerator, inputs::{BytesInput, HasTargetBytes}, monitors::SimpleMonitor, mutators::scheduled::{havoc_mutations, StdScheduledMutator}, observers::StdMapObserver, stages::mutational::StdMutationalStage, state::StdState};
+use libafl::corpus::QueueCorpusScheduler;
+use libafl::feedbacks::AllIsNovel;
+use libafl::inputs::HasBytesVec;
+use libafl::observers::TimeObserver;
 
 fn main() {
-    monitor_file("test");
+    let (file_send,file_receive): (Sender<Vec<u8>>, Receiver<Vec<u8>>) = mpsc::channel();
+    let mut harness = new_case();
+    
 }
 
-fn monitor_file(dir_path: &str){
+fn new_case() -> fn(&Vec<BytesInput>,  Receiver<Vec<u8>>) -> ExitKind {
+    let harness = |inputs: &Vec<BytesInput>, file_receive: Receiver<Vec<u8>> | {
+        let socket = UdpSocket::bind("127.0.0.1:10001").expect("Couldn't Bind to 127.0.0.1:34254");
+
+        let mut child = Command::new("'../openthread/output/simulation/bin/ot-cli-ftd")
+            .args(["1","--master","--dataset", "{\"Network_Key\": \"cf70867da8d41fbdb614aa9677addf9e\", \"PAN_ID\": \"0x7063\"}"])
+            .spawn()
+            .expect("couldn't start ot-cli-ftd");
+
+
+        for input in inputs {
+            socket.send_to(input.bytes(), "127.0.0.1:10001").expect("Couldn't send data");
+            file_receive.recv().unwrap();
+        }
+
+        match child.try_wait().unwrap(){
+            None => {}
+            Some(status) => {
+                    panic!("Returning with exit-status: {:?}",status);
+            }
+        }
+        ExitKind::Ok
+    };
+    harness
+}
+
+fn monitor_file(dir_path: &str, sender_endpoint: Sender<Vec<u8>>) {
     let mut filename: String = dir_path.to_owned();
     filename.push_str("/child.bin");
 
@@ -36,14 +68,15 @@ fn monitor_file(dir_path: &str){
 
     loop {
         match rx.recv() {
-            Ok(RawEvent{path: Some(path), op: Ok(op),cookie}) =>{
+            Ok(RawEvent { path: Some(path), op: Ok(op), cookie }) => {
                 match op {
-                     op::WRITE=> {
-                         let contents = fs::read(filename.borrow()).expect("Something went wrong reading the file");
-                    },
+                    op::WRITE => {
+                        let contents = fs::read(filename.clone()).expect("Something went wrong reading the file");
+                        sender_endpoint.send(contents).unwrap();
+                    }
                     _ => {}
                 }
-            },
+            }
             Ok(event) => println!("{:?}", event),
             Err(e) => println!("watch error: {:?}", e),
         }
