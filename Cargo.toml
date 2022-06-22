@@ -9,6 +9,7 @@ edition = "2021"
 libafl = "*"
 notify = "4.0.17"
 libafl_targets = "*"
+rand = "0.8.4"
 
 [profile.dev]
 panic = "abort"

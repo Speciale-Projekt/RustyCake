@@ -3,140 +3,140 @@ use std::borrow::{BorrowMut, Borrow};
 
 #[derive(Debug)]
 pub(crate) enum COMMANDS {
-    LINK_REQUEST = 0x00,
-    LINK_ACCEPT = 0x01,
-    LINK_ACCEPT_AND_REQUEST = 0x02,
-    LINK_REJECT = 0x03,
-    ADVERTISEMENT = 0x04,
-    UPDATE = 0x05,
-    UPDATE_REQUEST = 0x06,
-    DATA_REQUEST = 0x07,
-    DATA_RESPONSE = 0x08,
-    PARENT_REQUEST = 0x09,
-    PARENT_RESPONSE = 0x0A,
-    CHILD_ID_REQUEST = 0x0B,
-    CHILD_ID_RESPONSE = 0x0C,
-    CHILD_UPDATE_REQUEST = 0x0D,
-    CHILD_UPDATE_RESPONSE = 0x0E,
-    ANNOUNCE = 0x0F,
-    DISCOVERY_REQUEST = 0x10,
-    DISCOVERY_RESPONSE = 0x11,
-    UNKNOWN_COMMAND = 0xFF
+    LinkRequest = 0x00,
+    LinkAccept = 0x01,
+    LinkAcceptAndRequest = 0x02,
+    LinkReject = 0x03,
+    Advertisement = 0x04,
+    Update = 0x05,
+    UpdateRequest = 0x06,
+    DataRequest = 0x07,
+    DataResponse = 0x08,
+    ParentRequest = 0x09,
+    ParentResponse = 0x0A,
+    ChildIdRequest = 0x0B,
+    ChildIdResponse = 0x0C,
+    ChildUpdateRequest = 0x0D,
+    ChildUpdateResponse = 0x0E,
+    Announce = 0x0F,
+    DiscoveryRequest = 0x10,
+    DiscoveryResponse = 0x11,
+    UnknownCommand = 0xFF
 }
 impl COMMANDS {
     fn value(&self) -> u8 {
         match *self {
-            COMMANDS::LINK_REQUEST => 0x00,
-            COMMANDS::LINK_ACCEPT => 0x01,
-            COMMANDS::LINK_ACCEPT_AND_REQUEST => 0x02,
-            COMMANDS::LINK_REJECT => 0x03,
-            COMMANDS::ADVERTISEMENT => 0x04,
-            COMMANDS::UPDATE => 0x05,
-            COMMANDS::UPDATE_REQUEST => 0x06,
-            COMMANDS::DATA_REQUEST => 0x07,
-            COMMANDS::DATA_RESPONSE => 0x08,
-            COMMANDS::PARENT_REQUEST => 0x09,
-            COMMANDS::PARENT_RESPONSE => 0x0A,
-            COMMANDS::CHILD_ID_REQUEST => 0x0B,
-            COMMANDS::CHILD_ID_RESPONSE => 0x0C,
-            COMMANDS::CHILD_UPDATE_REQUEST => 0x0D,
-            COMMANDS::CHILD_UPDATE_RESPONSE => 0x0E,
-            COMMANDS::ANNOUNCE => 0x0F,
-            COMMANDS::DISCOVERY_REQUEST => 0x10,
-            COMMANDS::DISCOVERY_RESPONSE => 0x11,
-            COMMANDS::UNKNOWN_COMMAND => 0xFF
+            COMMANDS::LinkRequest => 0x00,
+            COMMANDS::LinkAccept => 0x01,
+            COMMANDS::LinkAcceptAndRequest => 0x02,
+            COMMANDS::LinkReject => 0x03,
+            COMMANDS::Advertisement => 0x04,
+            COMMANDS::Update => 0x05,
+            COMMANDS::UpdateRequest => 0x06,
+            COMMANDS::DataRequest => 0x07,
+            COMMANDS::DataResponse => 0x08,
+            COMMANDS::ParentRequest => 0x09,
+            COMMANDS::ParentResponse => 0x0A,
+            COMMANDS::ChildIdRequest => 0x0B,
+            COMMANDS::ChildIdResponse => 0x0C,
+            COMMANDS::ChildUpdateRequest => 0x0D,
+            COMMANDS::ChildUpdateResponse => 0x0E,
+            COMMANDS::Announce => 0x0F,
+            COMMANDS::DiscoveryRequest => 0x10,
+            COMMANDS::DiscoveryResponse => 0x11,
+            COMMANDS::UnknownCommand => 0xFF
         }
     }
 }
 impl From<u8> for COMMANDS {
     fn from(orig: u8) -> Self {
         match orig {
-            0x00 => COMMANDS::LINK_REQUEST,
-            0x01 => COMMANDS::LINK_ACCEPT,
-            0x02 => COMMANDS::LINK_ACCEPT_AND_REQUEST,
-            0x03 => COMMANDS::LINK_REJECT,
-            0x04 => COMMANDS::ADVERTISEMENT,
-            0x05 => COMMANDS::UPDATE,
-            0x06 => COMMANDS::UPDATE_REQUEST,
-            0x07 => COMMANDS::DATA_REQUEST,
-            0x08 => COMMANDS::DATA_RESPONSE,
-            0x09 => COMMANDS::PARENT_REQUEST,
-            0x0A => COMMANDS::PARENT_RESPONSE,
-            0x0B => COMMANDS::CHILD_ID_REQUEST,
-            0x0C => COMMANDS::CHILD_ID_RESPONSE,
-            0x0D => COMMANDS::CHILD_UPDATE_REQUEST,
-            0x0E => COMMANDS::CHILD_UPDATE_RESPONSE,
-            0x0F => COMMANDS::ANNOUNCE,
-            0x10 => COMMANDS::DISCOVERY_REQUEST,
-            0x11 => COMMANDS::DISCOVERY_RESPONSE,
-            _ => COMMANDS::UNKNOWN_COMMAND
+            0x00 => COMMANDS::LinkRequest,
+            0x01 => COMMANDS::LinkAccept,
+            0x02 => COMMANDS::LinkAcceptAndRequest,
+            0x03 => COMMANDS::LinkReject,
+            0x04 => COMMANDS::Advertisement,
+            0x05 => COMMANDS::Update,
+            0x06 => COMMANDS::UpdateRequest,
+            0x07 => COMMANDS::DataRequest,
+            0x08 => COMMANDS::DataResponse,
+            0x09 => COMMANDS::ParentRequest,
+            0x0A => COMMANDS::ParentResponse,
+            0x0B => COMMANDS::ChildIdRequest,
+            0x0C => COMMANDS::ChildIdResponse,
+            0x0D => COMMANDS::ChildUpdateRequest,
+            0x0E => COMMANDS::ChildUpdateResponse,
+            0x0F => COMMANDS::Announce,
+            0x10 => COMMANDS::DiscoveryRequest,
+            0x11 => COMMANDS::DiscoveryResponse,
+            _ => COMMANDS::UnknownCommand
         }
     }
 }
 
 #[derive(Debug)]
 pub(crate) enum TLVS {
-    SOURCE_ADDRESS_TLV = 0x00,
-    MODE_TLV = 0x01,
-    TIMEOUT_TLV = 0x02,
-    CHALLENGE_TLV = 0x03,
-    RESPONSE_TLV = 0x04,
-    LINK_LAYER_FRAME_COUNTER_TLV = 0x05,
-    LINK_QUALITY_TLV = 0x06,
-    NETWORK_PARAMETER_TLV = 0x07,
-    MLE_FRAME_COUNTER_TLV = 0x08,
-    ROUTE64_TLV = 0x09,
-    ADDRESS16_TLV = 0x0A,
-    LEADER_DATA_TLV = 0x0B,
-    NETWORK_DATA_TLV = 0x0C,
-    TLV_REQUEST_TLV = 0x0D,
-    SCAN_MASK_TLV = 0x0E,
-    CONNECTIVITY_TLV = 0x0F,
-    LINK_MARGIN_TLV = 0x10,
-    STATUS_TLV = 0x11,
-    VERSION_TLV = 0x12,
-    ADDRESS_REGISTRATION_TLV = 0x13,
-    CHANNEL_TLV = 0x14,
-    PAN_ID_TLV = 0x15,
-    ACTIVE_TIMESTAMP_TLV = 0x16,
-    PENDING_TIMESTAMP_TLV = 0x17,
-    ACTIVE_OPERATIONAL_DATASET_TLV = 0x18,
-    PENDING_OPERATIONAL_DATASET_TLV = 0x19,
-    THREAD_DISCOVERY_TLV = 0x1A,
-    UNKNOWN_TLV = 0xFF
+    SourceAddressTLV = 0x00,
+    ModeTLV = 0x01,
+    TimeoutTLV = 0x02,
+    ChallengeTLV = 0x03,
+    ResponseTLV = 0x04,
+    LinkLayerFrameCounterTLV = 0x05,
+    LinkQualityTLV = 0x06,
+    NetworkParameterTLV = 0x07,
+    MLEFrameCounterTLV = 0x08,
+    Route64TLV = 0x09,
+    Address16TLV = 0x0A,
+    LeaderDataTLV = 0x0B,
+    NetworkDataTLV = 0x0C,
+    TLVRequestTLV = 0x0D,
+    ScanMaskTLV = 0x0E,
+    ConnectivityTLV = 0x0F,
+    LinkMarginTLV = 0x10,
+    StatusTLV = 0x11,
+    VersionTLV = 0x12,
+    AddressRegistrationTLV = 0x13,
+    ChannelTLV = 0x14,
+    PanIDTLV = 0x15,
+    ActiveTimestampTLV = 0x16,
+    PendingTimestampTLV = 0x17,
+    ActiveOperationalDatasetTLV = 0x18,
+    PendingOperationalDatasetTLV = 0x19,
+    ThreadDiscoveryTLV = 0x1A,
+    UnknownTLV = 0xFF
 }
 impl TLVS {
     
     fn value(&self) -> u8 {
         match *self {
-            TLVS::SOURCE_ADDRESS_TLV => 0x00,
-            TLVS::MODE_TLV => 0x01,
-            TLVS::TIMEOUT_TLV => 0x02,
-            TLVS::CHALLENGE_TLV => 0x03,
-            TLVS::RESPONSE_TLV => 0x04,
-            TLVS::LINK_LAYER_FRAME_COUNTER_TLV => 0x05,
-            TLVS::LINK_QUALITY_TLV => 0x06,
-            TLVS::NETWORK_PARAMETER_TLV => 0x07,
-            TLVS::MLE_FRAME_COUNTER_TLV => 0x08,
-            TLVS::ROUTE64_TLV => 0x09,
-            TLVS::ADDRESS16_TLV => 0x0A,
-            TLVS::LEADER_DATA_TLV => 0x0B,
-            TLVS::NETWORK_DATA_TLV => 0x0C,
-            TLVS::TLV_REQUEST_TLV => 0x0D,
-            TLVS::SCAN_MASK_TLV => 0x0E,
-            TLVS::CONNECTIVITY_TLV => 0x0F,
-            TLVS::LINK_MARGIN_TLV => 0x10,
-            TLVS::STATUS_TLV => 0x11,
-            TLVS::VERSION_TLV => 0x12,
-            TLVS::ADDRESS_REGISTRATION_TLV => 0x13,
-            TLVS::CHANNEL_TLV => 0x14,
-            TLVS::PAN_ID_TLV => 0x15,
-            TLVS::ACTIVE_TIMESTAMP_TLV => 0x16,
-            TLVS::PENDING_TIMESTAMP_TLV => 0x17,
-            TLVS::ACTIVE_OPERATIONAL_DATASET_TLV => 0x18,
-            TLVS::PENDING_OPERATIONAL_DATASET_TLV => 0x19,
-            TLVS::THREAD_DISCOVERY_TLV => 0x1A,
-            TLVS::UNKNOWN_TLV => 0xFF
+            TLVS::SourceAddressTLV => 0x00,
+            TLVS::ModeTLV => 0x01,
+            TLVS::TimeoutTLV => 0x02,
+            TLVS::ChallengeTLV => 0x03,
+            TLVS::ResponseTLV => 0x04,
+            TLVS::LinkLayerFrameCounterTLV => 0x05,
+            TLVS::LinkQualityTLV => 0x06,
+            TLVS::NetworkParameterTLV => 0x07,
+            TLVS::MLEFrameCounterTLV => 0x08,
+            TLVS::Route64TLV => 0x09,
+            TLVS::Address16TLV => 0x0A,
+            TLVS::LeaderDataTLV => 0x0B,
+            TLVS::NetworkDataTLV => 0x0C,
+            TLVS::TLVRequestTLV => 0x0D,
+            TLVS::ScanMaskTLV => 0x0E,
+            TLVS::ConnectivityTLV => 0x0F,
+            TLVS::LinkMarginTLV => 0x10,
+            TLVS::StatusTLV => 0x11,
+            TLVS::VersionTLV => 0x12,
+            TLVS::AddressRegistrationTLV => 0x13,
+            TLVS::ChannelTLV => 0x14,
+            TLVS::PanIDTLV => 0x15,
+            TLVS::ActiveTimestampTLV => 0x16,
+            TLVS::PendingTimestampTLV => 0x17,
+            TLVS::ActiveOperationalDatasetTLV => 0x18,
+            TLVS::PendingOperationalDatasetTLV => 0x19,
+            TLVS::ThreadDiscoveryTLV => 0x1A,
+            TLVS::UnknownTLV => 0xFF
         }
     }
 }
@@ -144,34 +144,34 @@ impl TLVS {
 impl From<u8> for TLVS {
     fn from(orig: u8) -> Self {
         match orig {
-            0x00 => TLVS::SOURCE_ADDRESS_TLV,
-            0x01 => TLVS::MODE_TLV,
-            0x02 => TLVS::TIMEOUT_TLV,
-            0x03 => TLVS::CHALLENGE_TLV,
-            0x04 => TLVS::RESPONSE_TLV,
-            0x05 => TLVS::LINK_LAYER_FRAME_COUNTER_TLV,
-            0x06 => TLVS::LINK_QUALITY_TLV,
-            0x07 => TLVS::NETWORK_PARAMETER_TLV,
-            0x08 => TLVS::MLE_FRAME_COUNTER_TLV,
-            0x09 => TLVS::ROUTE64_TLV,
-            0x0A => TLVS::ADDRESS16_TLV,
-            0x0B => TLVS::LEADER_DATA_TLV,
-            0x0C => TLVS::NETWORK_DATA_TLV,
-            0x0D => TLVS::TLV_REQUEST_TLV,
-            0x0E => TLVS::SCAN_MASK_TLV,
-            0x0F => TLVS::CONNECTIVITY_TLV,
-            0x10 => TLVS::LINK_MARGIN_TLV,
-            0x11 => TLVS::STATUS_TLV,
-            0x12 => TLVS::VERSION_TLV,
-            0x13 => TLVS::ADDRESS_REGISTRATION_TLV,
-            0x14 => TLVS::CHANNEL_TLV,
-            0x15 => TLVS::PAN_ID_TLV,
-            0x16 => TLVS::ACTIVE_TIMESTAMP_TLV,
-            0x17 => TLVS::PENDING_TIMESTAMP_TLV,
-            0x18 => TLVS::ACTIVE_OPERATIONAL_DATASET_TLV,
-            0x19 => TLVS::PENDING_OPERATIONAL_DATASET_TLV,
-            0x1A => TLVS::THREAD_DISCOVERY_TLV,
-            _ => TLVS::UNKNOWN_TLV
+            0x00 => TLVS::SourceAddressTLV,
+            0x01 => TLVS::ModeTLV,
+            0x02 => TLVS::TimeoutTLV,
+            0x03 => TLVS::ChallengeTLV,
+            0x04 => TLVS::ResponseTLV,
+            0x05 => TLVS::LinkLayerFrameCounterTLV,
+            0x06 => TLVS::LinkQualityTLV,
+            0x07 => TLVS::NetworkParameterTLV,
+            0x08 => TLVS::MLEFrameCounterTLV,
+            0x09 => TLVS::Route64TLV,
+            0x0A => TLVS::Address16TLV,
+            0x0B => TLVS::LeaderDataTLV,
+            0x0C => TLVS::NetworkDataTLV,
+            0x0D => TLVS::TLVRequestTLV,
+            0x0E => TLVS::ScanMaskTLV,
+            0x0F => TLVS::ConnectivityTLV,
+            0x10 => TLVS::LinkMarginTLV,
+            0x11 => TLVS::StatusTLV,
+            0x12 => TLVS::VersionTLV,
+            0x13 => TLVS::AddressRegistrationTLV,
+            0x14 => TLVS::ChannelTLV,
+            0x15 => TLVS::PanIDTLV,
+            0x16 => TLVS::ActiveTimestampTLV,
+            0x17 => TLVS::PendingTimestampTLV,
+            0x18 => TLVS::ActiveOperationalDatasetTLV,
+            0x19 => TLVS::PendingOperationalDatasetTLV,
+            0x1A => TLVS::ThreadDiscoveryTLV,
+            _ => TLVS::UnknownTLV
         }
     }
 }
@@ -228,7 +228,7 @@ fn assign_tlvs(msg: Vec<u8>) -> (usize,  Vec<Tlv>)  {
             tlv_length = msg.len() - 2;
         }
         match msg[next_index] {
-            x if x >= TLVS::SOURCE_ADDRESS_TLV.value() as u8 && x <= TLVS::THREAD_DISCOVERY_TLV.value() as u8 => {
+            x if x >= TLVS::SourceAddressTLV.value() as u8 && x <= TLVS::ThreadDiscoveryTLV.value() as u8 => {
                tlvs.push(Tlv {
                     tlv_type: x.into(),
                     length: tlv_length,
@@ -237,7 +237,7 @@ fn assign_tlvs(msg: Vec<u8>) -> (usize,  Vec<Tlv>)  {
             }
             _ => {
                 tlvs.push (Tlv {
-                    tlv_type: TLVS::UNKNOWN_TLV,
+                    tlv_type: TLVS::UnknownTLV,
                     length: tlv_length,
                     value: msg[2..tlv_length + 2].to_vec(),
                 });
@@ -280,7 +280,7 @@ pub(crate) fn assign_command(message: Vec<u8>) -> Vec<Command> {
             next_index = message.len() - 1;
         }
         match message[command_index] {
-            x if x <= COMMANDS::DISCOVERY_RESPONSE.value() && x >= COMMANDS::LINK_REQUEST.value() => 
+            x if x <= COMMANDS::DiscoveryResponse.value() && x >= COMMANDS::LinkRequest.value() => 
             commands.append(&mut vec![Command {
                 command: x.into(),
                 tlvs: vv,
@@ -288,7 +288,7 @@ pub(crate) fn assign_command(message: Vec<u8>) -> Vec<Command> {
             }]),
                 _ => {
                     commands.append(&mut vec![Command {
-                        command: COMMANDS::UNKNOWN_COMMAND,
+                        command: COMMANDS::UnknownCommand,
                         tlvs: vv,
                         payload: message[command_index-1.. next_index].to_vec(),
                     }]);
