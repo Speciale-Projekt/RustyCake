@@ -1,8 +1,10 @@
 mod fuzz;
 mod mutator;
+mod utils;
 
 extern crate notify;
 
+use utils::*;
 use std::path::PathBuf;
 use std::borrow::Borrow;
 use std::{fs, thread};
@@ -18,10 +20,17 @@ use std::sync::mpsc;
 use libafl::corpus::RandCorpusScheduler;
 use rand::Rng;
 use crate::mutator::Mutator;
+use crate::parser::assign_command;
 
 fn main() {
     let (file_send, file_receive): (Sender<Vec<u8>>, Receiver<Vec<u8>>) = mpsc::channel();
     let mut file = File::open("in/sequence").expect("Could not open sequence file");
+    let mut data = String::new();
+    file.read_to_string(&mut data);
+
+    let bytes = assign_command(data.into_bytes());
+
+
 
     thread::spawn(move || {
         let mutator: Mutator = Mutator::new();
