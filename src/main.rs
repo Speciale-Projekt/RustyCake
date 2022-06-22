@@ -1,5 +1,8 @@
 extern crate notify;
 extern crate libafl;
+mod utils;
+use crate::utils::parser;
+
 
 use libafl::{
     bolts::AsSlice,
@@ -14,6 +17,15 @@ use std::io::prelude::*;
 use crate::libafl::inputs::Input;
 
 fn main() {
+
+    // Create a tmp msg that looks like: 0xFF 0x10 0x1A 0x05 0x12 0x34 0x56 0x78 0x99
+    let msg: Vec<u8> = [0xFF, 0x10, 0x1A, 0x05, 0x12, 0x34, 0x56, 0x78, 0x99,0xaa,0x1, 0xFF, 0x10, 0x1A, 0x07, 0x12, 0x34, 0x56, 0x78, 0x99].to_vec();
+    let res = parser::assign_command(msg);
+
+
+    println!("{:?}", res);
+
+    let temp = "";
 
     let mut harness = |input: &BytesInput| {
         // Create a channel to receive the events.
